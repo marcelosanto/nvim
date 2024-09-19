@@ -147,8 +147,22 @@ return {
     {
         "neovim/nvim-lspconfig",
         opts = {
-            setup = {
-                rust_analyzer = function() end,
+            servers = {
+                taplo = {
+                    keys = {
+                        {
+                            "K",
+                            function()
+                                if vim.fn.expand("%:t") == "Cargo.toml" and require("crates").popup_available() then
+                                    require("crates").show_popup()
+                                else
+                                    vim.lsp.buf.hover()
+                                end
+                            end,
+                            desc = "Show Crate Documentation",
+                        },
+                    },
+                },
             },
         },
     },
@@ -195,23 +209,23 @@ return {
             },
         },
         config = function(_, opts)
-            -- vim.g.rustaceanvim = vim.tbl_deep_extend("keep", vim.g.rustaceanvim or {}, opts or {})
-            -- if vim.fn.executable("rust-analyzer") == 0 then
-            --   LazyVim.error(
-            --     "**rust-analyzer** not found in PATH, please install it.\nhttps://rust-analyzer.github.io/",
-            --     { title = "rustaceanvim" }
-            --   )
-            -- end,
-            vim.g.rustaceanvim = {
-                tools = {
-                    float_win_config = {
-                        border = 'rounded'
-                    }
-                },
-                server = {
-                    on_attach = require("lvim.lsp").common_on_attach
-                },
-            }
+            vim.g.rustaceanvim = vim.tbl_deep_extend("keep", vim.g.rustaceanvim or {}, opts or {})
+            if vim.fn.executable("rust-analyzer") == 0 then
+                LazyVim.error(
+                    "**rust-analyzer** not found in PATH, please install it.\nhttps://rust-analyzer.github.io/",
+                    { title = "rustaceanvim" }
+                )
+            end
+            -- vim.g.rustaceanvim = {
+            --     tools = {
+            --         float_win_config = {
+            --             border = 'rounded'
+            --         }
+            --     },
+            --     server = {
+            --         on_attach = require("lvim.lsp").common_on_attach
+            --     },
+            -- }
         end,
     },
 }
